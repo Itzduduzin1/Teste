@@ -1,49 +1,50 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Meu App</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title></title>
 
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: Arial, sans-serif;
     }
 
     body {
-      background: #121212;
-      color: white;
       height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 20px;
+      overflow: hidden;
     }
 
     .container {
       width: 100%;
-      max-width: 420px;
-      background: #1f1f1f;
-      padding: 25px;
-      border-radius: 20px;
-      box-shadow: 0 10px 30px rgba(0,0,0,.4);
+      max-width: 500px;
+      text-align: center;
+      position: relative;
     }
 
-    h1 {
-      text-align: center;
+    .logo {
+      font-weight: 900;
       margin-bottom: 10px;
     }
 
-    p {
-      text-align: center;
-      margin-bottom: 30px;
-      color: #aaa;
+    .subtitle {
+      margin-bottom: 40px;
+    }
+
+    .card {
+      backdrop-filter: blur(10px);
+      width: 100;
     }
 
     .input-group {
+      text-align: left;
       margin-bottom: 20px;
     }
 
@@ -51,170 +52,489 @@
       display: block;
       margin-bottom: 8px;
       font-size: 14px;
+      font-weight: bold;
+      letter-spacing: 1px;
     }
 
     .input-group input {
       width: 100%;
-      padding: 14px;
       border: none;
-      border-radius: 12px;
-      background: #2c2c2c;
-      color: white;
-      font-size: 16px;
+      outline: none;
+      font-size: 15px;
     }
 
-    button {
+    .captcha {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 25px 0;
+      font-size: 18px;
+    }
+
+    .btn {
       width: 100%;
-      padding: 15px;
+      padding: 16px;
       border: none;
-      border-radius: 12px;
-      background: #7b5cff;
-      color: white;
-      font-size: 16px;
+      border-radius: 14px;
+      font-size: 18px;
       font-weight: bold;
       cursor: pointer;
-      transition: .2s;
-    }
-
-    button:hover {
-      opacity: .9;
-    }
-
-    .tasks {
-      margin-top: 25px;
-    }
-
-    .task {
-      background: #2a2a2a;
-      padding: 14px;
-      border-radius: 12px;
+      transition: 0.3s;
       margin-bottom: 12px;
     }
 
-    .notify {
+    .footer {
+      margin-top: 40px;
+      line-height: 1.8;
+      font-size: 14px;
+    }
+
+    .footer a {
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .character {
+      position: absolute;
+      pointer-events: none;
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      border-radius: 25px;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .modal {
+      width: 400px;
+      max-height: 500px;
+      overflow-y: auto;
+      background: #241513;
+      padding: 20px;
+      border-radius: 20px;
+      color: white;
+    }
+
+    .modal h2 {
+      margin-bottom: 15px;
+    }
+
+    .task-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 15px;
+    }
+
+    .modal-actions button {
+      padding: 8px 12px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    #notify-container {
       position: fixed;
       top: 20px;
       right: 20px;
-      background: #222;
-      color: white;
-      padding: 14px 18px;
-      border-radius: 12px;
-      z-index: 999;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      z-index: 99999;
+    }
+
+    .notify {
+      min-width: 280px;
+      max-width: 340px;
+
+      padding: 16px 18px;
+
+      border-radius: 18px;
+
+      background: rgba(36, 21, 19, .92);
+
+      border: 1.5px solid rgba(255, 255, 255, .06);
+
+      backdrop-filter: blur(14px);
+
+      color: #f5e6c8;
+
+      font-size: 15px;
+      font-weight: 500;
+
+      box-shadow:
+        0 10px 30px rgba(0, 0, 0, .35),
+        inset 0 1px 0 rgba(255, 255, 255, .03);
+
+      position: relative;
+
+      overflow: hidden;
+
+      animation: notifyIn .25s ease;
+    }
+
+    .notify::after {
+      content: "";
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      bottom: 10px;
+
+      height: 1px;
+
+      background: rgba(255, 255, 255, .08);
+    }
+
+    .notify.success {
+      border-color: #7BAF6E;
+    }
+
+    .notify.error {
+      border-color: #D4715E;
+    }
+
+    .notify.warn {
+      border-color: rgba(245, 158, 11, 0.67);
+    }
+
+    .notify.info {
+      border-color: #3D3229;
+    }
+
+    @keyframes notifyIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px) scale(.98);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @media(max-width:700px) {
+
+      body {
+        align-items: flex-start;
+        overflow-y: auto;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 100%;
+        margin-top: 40px;
+      }
+
+      .card {
+        padding: 20px !important;
+      }
+
+      .logo {
+        font-size: 48px !important;
+      }
+
+      .subtitle {
+        font-size: 15px;
+        margin-bottom: 25px;
+      }
+
+      .btn {
+        padding: 14px;
+        font-size: 16px;
+      }
+
+      .modal {
+        width: 100%;
+        max-width: 95%;
+        max-height: 80vh;
+        border-radius: 18px;
+      }
+
+      .modal-actions {
+        gap: 10px;
+        flex-direction: column;
+      }
+
+      .modal-actions button {
+        width: 100%;
+      }
+
+      .notify {
+        min-width: auto;
+        width: calc(100vw - 30px);
+        max-width: none;
+
+        font-size: 14px;
+        padding: 14px 16px;
+      }
+
+      #notify-container {
+        top: 12px;
+        left: 12px;
+        right: 12px;
+      }
+
+      .character {
+        /* width:160px !important; */
+        left: -10px !important;
+        bottom: -100px !important;
+        opacity: .5;
+        z-index: 1;
+      }
+
+      .input-group input {
+        font-size: 16px;
+      }
+
+      .toggle-pass img {
+        width: 20px;
+        height: 20px;
+      }
+
+    }
+
+    @media(max-width:500px) {
+      .character {
+        width: 160px !important;
+        left: -20px !important;
+        top: -30px !important;
+        opacity: .5;
+        z-index: 1;
+      }
     }
   </style>
 </head>
+
 <body>
 
   <div class="container">
-    <h1>Meu App</h1>
-    <p>Login do sistema</p>
 
-    <form id="loginForm">
-      <div class="input-group">
-        <label>Email</label>
-        <input type="text" id="email" placeholder="Digite seu email" />
+    <h1 class="logo" id="logo"></h1>
+    <p class="subtitle" id="subtitle"></p>
+
+    <div class="card" id="card">
+
+      <form id="form"></form>
+      <div id="overlay" class="overlay hidden">
+        <div class="modal">
+          <h2>Selecionar atividades</h2>
+
+          <div class="modal-actions">
+            <button id="selectAll">Selecionar todos</button>
+            <button id="startBtn">Fazer</button>
+          </div>
+
+          <div id="taskList"></div>
+        </div>
       </div>
 
-      <div class="input-group">
-        <label>Senha</label>
-        <input type="password" id="senha" placeholder="Digite sua senha" />
-      </div>
+      <!-- <div class="captcha">
+        <input type="checkbox">
+        <span id="captchaText"></span>
+      </div> -->
 
-      <button type="submit">Entrar</button>
-    </form>
+      <div id="buttons"></div>
 
-    <div class="tasks" id="tasks"></div>
+    </div>
+
+    <div class="footer" id="footer"></div>
+
+    <img class="character" id="character">
+
   </div>
 
+  <div id="notify-container"></div>
+
   <script>
-    const API = "https://testsunsa.discloud.app/api";
+    let config;
 
-    let token = null;
+    async function loadConfig() {
+      const res = await fetch("./sla.json");
+      config = await res.json();
 
-    function notify(text) {
-      const div = document.createElement("div");
-      div.className = "notify";
-      div.innerText = text;
-
-      document.body.appendChild(div);
-
-      setTimeout(() => {
-        div.remove();
-      }, 3000);
+      applyConfig();
     }
 
-    async function login(email, senha) {
-      try {
-        const response = await fetch(`${API}/auth/token`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            email,
-            senha
-          })
-        });
+    function applyConfig() {
+      document.title = config.site.nome
+      document.body.style.background = config.site.background;
+      document.body.style.fontFamily = config.site.fonte;
 
-        const data = await response.json();
+      const logo = document.getElementById("logo");
+      logo.innerText = config.logo.texto;
+      logo.style.color = config.logo.cor;
+      logo.style.fontSize = config.logo.tamanho;
 
-        if (!data.token) {
-          notify("Login falhou");
-          return;
+      const subtitle = document.getElementById("subtitle");
+      subtitle.innerText = config.site.subtitulo;
+      subtitle.style.color = "#8b6d5c";
+
+      const card = document.getElementById("card");
+      card.style.background = config.card.background;
+      card.style.border = config.card.borda;
+      card.style.borderRadius = config.card.radius;
+      card.style.padding = config.card.padding;
+      card.style.boxShadow = config.card.shadow;
+
+      const form = document.getElementById("form");
+
+      config.campos.forEach(campo => {
+        const group = document.createElement("div");
+        group.className = "input-group";
+
+        const label = document.createElement("label");
+        label.innerText = campo.label;
+        label.style.color = "#c9a98b";
+
+        const input = document.createElement("input");
+        input.type = campo.type;
+        input.placeholder = campo.placeholder;
+
+        input.style.background = config.inputs.background;
+        input.style.color = config.inputs.corTexto;
+        input.style.borderRadius = config.inputs.radius;
+        input.style.padding = config.inputs.padding;
+
+        group.appendChild(label);
+
+        if (campo.type === "password") {
+
+          const wrap = document.createElement("div");
+
+          wrap.style.position = "relative";
+
+          input.style.paddingRight = "50px";
+
+          const toggle = document.createElement("button");
+
+          toggle.type = "button";
+
+          toggle.innerHTML = `
+  <img src="./icons/eye.png" width="22">
+`;
+
+          toggle.style.position = "absolute";
+          toggle.style.right = "12px";
+          toggle.style.top = "50%";
+          toggle.style.transform = "translateY(-50%)";
+
+          toggle.style.border = "none";
+          toggle.style.background = "transparent";
+          toggle.style.cursor = "pointer";
+          toggle.style.fontSize = "18px";
+
+          toggle.addEventListener("click", () => {
+
+            if (input.type === "password") {
+              input.type = "text";
+              toggle.innerHTML = `
+  <img src="./icons/eye-off.png" width="22">
+`;
+            } else {
+              input.type = "password";
+              toggle.innerHTML = `
+  <img src="./icons/eye.png" width="22">
+`;
+            }
+
+          });
+
+          wrap.appendChild(input);
+          wrap.appendChild(toggle);
+
+          group.appendChild(wrap);
+
+        } else {
+          group.appendChild(input);
         }
 
-        token = data.token;
+        form.appendChild(group);
+      });
 
-        notify("Login feito com sucesso");
+      // document.getElementById("captchaText").innerText =
+      //   config.captcha.texto;
 
-        carregarTarefas();
+      const buttons = document.getElementById("buttons");
 
-      } catch (err) {
-        console.log(err);
-        notify("Erro no login");
-      }
-    }
+      config.botoes.forEach(btnData => {
+        const btn = document.createElement("button");
 
-    async function carregarTarefas() {
-      try {
-        const response = await fetch(`${API}/tarefas`, {
-          headers: {
-            Authorization: `Bearer ${token}`
+        btn.className = "btn";
+        btn.innerText = btnData.texto;
+
+        btn.style.background = btnData.background;
+        btn.style.color = btnData.corTexto;
+
+        if (btnData.borda) {
+          btn.style.border = btnData.borda;
+        }
+
+        btn.addEventListener("click", async () => {
+          const inputs = document.querySelectorAll("input");
+
+          const ra = inputs[0].value;
+          const senha = inputs[1].value;
+
+          if (btnData.texto.includes("Tarefas")) {
+            console.log("Carregando tarefas...");
+            notify("Carregando tarefas...", "info");
+            const data = await login(ra, senha);
+            if (data.erro) return;
+            await carregarTarefas();
+          }
+
+          if (btnData.texto.includes("Expiradas")) {
+            console.log("Expiradas ainda não implementado");
           }
         });
 
-        const tarefas = await response.json();
+        buttons.appendChild(btn);
+      });
 
-        const tasksDiv = document.getElementById("tasks");
+      const footer = document.getElementById("footer");
 
-        tasksDiv.innerHTML = "";
+      footer.style.color = config.footer.cor;
 
-        tarefas.forEach(task => {
-          const div = document.createElement("div");
-          div.className = "task";
-          div.innerHTML = `
-            <strong>${task.titulo}</strong>
-          `;
+      footer.innerHTML = `
+        ${config.footer.texto1}<br>
+        <a href="#">${config.footer.texto2}</a><br>
+        ${config.footer.texto3}
+      `;
 
-          tasksDiv.appendChild(div);
-        });
+      footer.querySelector("a").style.color =
+        config.footer.linkCor;
 
-      } catch (err) {
-        console.log(err);
-      }
+      const character = document.getElementById("character");
+
+      character.src = config.imagem.url;
+      character.style.width = config.imagem.largura;
+      character.style.left = config.imagem.posicao.left;
+      character.style.bottom = config.imagem.posicao.bottom;
     }
 
-    document
-      .getElementById("loginForm")
-      .addEventListener("submit", async (e) => {
-        e.preventDefault();
-
-        const email = document.getElementById("email").value;
-        const senha = document.getElementById("senha").value;
-
-        await login(email, senha);
-      });
+    // 🔥 EXECUTA AQUI
+    loadConfig();
   </script>
+  <script src="test.js"></script>
 
 </body>
+
 </html>
