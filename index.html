@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meu App</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #121212;
+      color: white;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 420px;
+      background: #1f1f1f;
+      padding: 25px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.4);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    p {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #aaa;
+    }
+
+    .input-group {
+      margin-bottom: 20px;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      background: #2c2c2c;
+      color: white;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 12px;
+      background: #7b5cff;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    button:hover {
+      opacity: .9;
+    }
+
+    .tasks {
+      margin-top: 25px;
+    }
+
+    .task {
+      background: #2a2a2a;
+      padding: 14px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+    }
+
+    .notify {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #222;
+      color: white;
+      padding: 14px 18px;
+      border-radius: 12px;
+      z-index: 999;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Meu App</h1>
+    <p>Login do sistema</p>
+
+    <form id="loginForm">
+      <div class="input-group">
+        <label>Email</label>
+        <input type="text" id="email" placeholder="Digite seu email" />
+      </div>
+
+      <div class="input-group">
+        <label>Senha</label>
+        <input type="password" id="senha" placeholder="Digite sua senha" />
+      </div>
+
+      <button type="submit">Entrar</button>
+    </form>
+
+    <div class="tasks" id="tasks"></div>
+  </div>
+
+  <script>
+    const API = "https://testsunsa.discloud.app/api";
+
+    let token = null;
+
+    function notify(text) {
+      const div = document.createElement("div");
+      div.className = "notify";
+      div.innerText = text;
+
+      document.body.appendChild(div);
+
+      setTimeout(() => {
+        div.remove();
+      }, 3000);
+    }
+
+    async function login(email, senha) {
+      try {
+        const response = await fetch(`${API}/auth/token`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            email,
+            senha
+          })
+        });
+
+        const data = await response.json();
+
+        if (!data.token) {
+          notify("Login falhou");
+          return;
+        }
+
+        token = data.token;
+
+        notify("Login feito com sucesso");
+
+        carregarTarefas();
+
+      } catch (err) {
+        console.log(err);
+        notify("Erro no login");
+      }
+    }
+
+    async function carregarTarefas() {
+      try {
+        const response = await fetch(`${API}/tarefas`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        const tarefas = await response.json();
+
+        const tasksDiv = document.getElementById("tasks");
+
+        tasksDiv.innerHTML = "";
+
+        tarefas.forEach(task => {
+          const div = document.createElement("div");
+          div.className = "task";
+          div.innerHTML = `
+            <strong>${task.titulo}</strong>
+          `;
+
+          tasksDiv.appendChild(div);
+        });
+
+      } catch (err) {
+        console.log(err);
+      }
+    }
+
+    document
+      .getElementById("loginForm")
+      .addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const email = document.getElementById("email").value;
+        const senha = document.getElementById("senha").value;
+
+        await login(email, senha);
+      });
+  </script>
+
+</body>
+</html>
