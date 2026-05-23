@@ -1,0 +1,78 @@
+{
+  "site": {
+    "nome": "Taskitos",
+    "subtitulo": "para sala do futuro e cmsp",
+    "background": "#140807",
+    "fonte": "Arial"
+  },
+
+  "logo": {
+    "texto": "Taskitos",
+    "cor": "#f5e6c8",
+    "tamanho": "90px"
+  },
+
+  "card": {
+    "background": "#241513",
+    "borda": "1px solid rgba(255,255,255,0.08)",
+    "radius": "25px",
+    "padding": "30px",
+    "shadow": "0 0 30px rgba(0,0,0,0.3)"
+  },
+
+  "inputs": {
+    "background": "#e8edf7",
+    "corTexto": "#000000",
+    "radius": "12px",
+    "padding": "15px"
+  },
+
+  "campos": [
+    {
+      "label": "RA",
+      "placeholder": "Digite seu RA",
+      "type": "text"
+    },
+    {
+      "label": "SENHA",
+      "placeholder": "********",
+      "type": "password"
+    }
+  ],
+
+  "captcha": {
+    "texto": "Eu não sou um robô"
+  },
+
+  "botoes": [
+    {
+      "texto": "Tarefas Pendentes",
+      "background": "#f5e6c8",
+      "corTexto": "#1d0d09",
+      "hover": "#e8d5b5"
+    },
+    {
+      "texto": "Atividades Expiradas",
+      "background": "transparent",
+      "corTexto": "#ffffff",
+      "borda": "1px solid rgba(255,255,255,0.1)"
+    }
+  ],
+
+  "footer": {
+    "texto1": "Entre no nosso Discord",
+    "texto2": "Platform Destroyer",
+    "texto3": "feito por ducalofc",
+    "cor": "#8b6d5c",
+    "linkCor": "#f5e6c8"
+  },
+
+  "imagem": {
+    "url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/133.png",
+    "largura": "250px",
+    "posicao": {
+      "left": "-120px",
+      "bottom": "-60px"
+    }
+  }
+}
